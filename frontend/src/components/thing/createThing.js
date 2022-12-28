@@ -126,10 +126,12 @@ class CreateThing extends Component {
     UserService.addThing(thing)
       .then(res => {
         const userList = {
-          id: res.data.id,
+          thingId: res.data.id,
           friendList: friendList
         };
-        console.log(userList);
+        UserService.addThingUserMap(userList).catch(err => {
+          console.log(err);
+        })
         this.props.navigate('/calendar');
       })
       .catch(err => {

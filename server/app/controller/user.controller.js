@@ -125,7 +125,7 @@ exports.addThingUserMap = (req, res) => {
     verifyToken(req, res, async() => {
         const thing = await Thing.findOne({
             where: {
-                id: req.body.id
+                id: req.body.thingId
             }
         });
         if (!thing) {
@@ -133,17 +133,15 @@ exports.addThingUserMap = (req, res) => {
                 message: "Thing not found"
             });
         }
-        
-        thing.addUser(1)
-        .then(res => {
-            res.status(200).send(res);
+        await Promise.all(req.body.friendList.map(user => thing.addUser(user.userId)))
+        .then(() => {
+            res.status(200).send({ message: 'User successfully associated with thing' });
         })
         .catch(err => {
             res.status(500).send({
                 message: err.message
             });
-        })
-
+        });
     });
 }
 
