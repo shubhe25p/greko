@@ -1,30 +1,48 @@
-name: Build and Deploy
+name: Build and Push Greko
 
 on: [push]
 
 jobs:
-  build-and-deploy:
+  build-and-push-greko-backend :
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-node@v1
+    - uses: actions/checkout@v3
+
+    - uses: actions/setup-node@v3
       with:
-        node-version: 16.18
-    - name: Install dependencies
-      run: npm install
+        node-version: 16.18.1
+
     - name: Build Docker image
-      run: docker build -t my-image .
+      run: |
+      cd server
+      npm install
+      docker build -t shubhfb/greko-backend:latest .
+
     - name: Login to Docker Hub
       run: echo "${{ secrets.DOCKER_HUB_PASSWORD }}" | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
+    
     - name: Push Docker image to Docker Hub
-      run: docker push my-image
-    - name: SSH into GCP instance
-      uses: appleboy/ssh-action@master
+      run: docker push shubhfb/greko-backend:latest
+  
+  build-and-push-greko-frontend :
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - uses: actions/setup-node@v3
       with:
-        host: ${{ secrets.GCP_HOST }}
-        username: ${{ secrets.GCP_USERNAME }}
-        password: ${{ secrets.GCP_PASSWORD }}
-    - name: Run Bash script on GCP instance
+        node-version: 16.18.1
+
+    - name: Build Docker image
       run: |
-        ssh ${{ secrets.GCP_USERNAME }}@${{ secrets.GCP_HOST }} "bash /path/to/script.sh"
+      cd frontend
+      npm install
+      docker build -t shubhfb/greko-frontend:latest .
+
+    - name: Login to Docker Hub
+      run: echo "${{ secrets.DOCKER_HUB_PASSWORD }}" | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
+    
+    - name: Push Docker image to Docker Hub
+      run: docker push shubhfb/greko-frontend:latest
