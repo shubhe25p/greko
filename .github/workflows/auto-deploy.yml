@@ -15,9 +15,9 @@ jobs:
 
     - name: Build Docker image
       run: |
-      cd server
-      npm install
-      docker build -t shubhfb/greko-backend:latest .
+        cd server
+        npm install
+        docker build -t shubhfb/greko-backend:latest .
 
     - name: Login to Docker Hub
       run: echo "${{ secrets.DOCKER_HUB_PASSWORD }}" | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
@@ -37,9 +37,9 @@ jobs:
 
     - name: Build Docker image
       run: |
-      cd frontend
-      npm install
-      docker build -t shubhfb/greko-frontend:latest .
+        cd frontend
+        npm install
+        docker build -t shubhfb/greko-frontend:latest .
 
     - name: Login to Docker Hub
       run: echo "${{ secrets.DOCKER_HUB_PASSWORD }}" | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
