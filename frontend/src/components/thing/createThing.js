@@ -1,4 +1,4 @@
-import React, { useState, Component } from "react";
+import React, { Component } from "react";
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
@@ -19,39 +19,9 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
 
-function FriendChip(props) {
-  const { onDelete, friend } = props;
-
-  return (
-    <Chip label={friend.username} key={friend.username} friend={friend} onDelete={onDelete} />
-  );
-}
-
 function randomDate(start, end) {
   return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
 }
-
-function ThingFriendsChips(props) {
-  const [thingFriends, setThingFriends] = useState(props.friends);
-
-  const handleDelete = friend => {
-    setThingFriends(prevThingFriends => {
-      const index = prevThingFriends.indexOf(friend);
-      const newThingFriends = [...prevThingFriends];
-      newThingFriends.splice(index, 1);
-      return newThingFriends;
-    });
-  }
-
-  return (
-    <div>
-      {thingFriends.map(friend => {
-        return <FriendChip friend={friend} onDelete={handleDelete} />;
-      })}
-    </div>
-  );
-}
-
 
 class CreateThing extends Component {
 
@@ -59,13 +29,11 @@ class CreateThing extends Component {
     super(props);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
-    this.handleCancel = this.handleCancel.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
     this.suggestTime = this.suggestTime.bind(this);
 
     this.handleFriend = this.handleFriend.bind(this);
     this.state = {
-      open: true,
       name: "",
       description: "",
       tag: "",
@@ -79,7 +47,7 @@ class CreateThing extends Component {
   }
 
   componentDidMount() {
-    UserService.getFriends().then(res => this.state.friends = res.data);
+    UserService.getFriends().then(res => this.setState({ friends: res.data }));
   }
   handleFriend(e) {
     this.setState({
@@ -99,10 +67,6 @@ class CreateThing extends Component {
         date: e.$d
       })
     }
-  }
-
-  handleCancel(e) {
-    this.props.navigate("/calendar");
   }
 
   handleSubmit(e) {
@@ -129,10 +93,13 @@ class CreateThing extends Component {
           thingId: res.data.id,
           friendList: friendList
         };
-        UserService.addThingUserMap(userList).catch(err => {
+        UserService.addThingUserMap(userList)
+        .then(res => {
+          this.props.OnClose();
+        })
+        .catch(err => {
           console.log(err);
         })
-        this.props.navigate('/calendar');
       })
       .catch(err => {
         console.log(err);
@@ -174,7 +141,7 @@ class CreateThing extends Component {
   render() {
     return (
       <Dialog
-        open={this.state.open}
+        open={this.props.open}
       >
         <DialogTitle>
           Create Thing
@@ -313,7 +280,7 @@ class CreateThing extends Component {
           </Grid>
           
           <DialogActions>
-            <Button onClick={this.handleCancel}>Cancel</Button>
+            <Button onClick={this.props.OnClose}>Cancel</Button>
             <Button type="submit" variant="contained">Save</Button>
           </DialogActions>
           {/* <ThingFriendsChips 

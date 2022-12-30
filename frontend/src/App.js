@@ -12,14 +12,21 @@ import SignIn from "./components/SignIn"
 import Calendar from "./components/calendar"
 import CreateThing from "./components/thing/createThing";
 import Friends from "./components/friends"
-
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import IconButton from '@mui/material/IconButton';
+import MenuIcon from '@mui/icons-material/Menu';
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.logOut = this.logOut.bind(this);
+    this.handleDialog = this.handleDialog.bind(this);
+
+
     this.state = {
       currentUser: undefined,
+      openDialog: false
     };
   }
 
@@ -32,6 +39,13 @@ class App extends Component {
       });
     }
   }
+
+  handleDialog(){
+    this.setState({
+      openDialog: !this.state.openDialog,
+    });
+  }
+
 
   logOut() {
     AuthService.logout();
@@ -69,9 +83,12 @@ class App extends Component {
               </li>
 
               <li className="nav-item">
-                <Link to={"/add-thing"} className="nav-link">
-                  <Button variant="contained">Create thing</Button>
-                </Link>
+                  <Button variant="contained" onClick={this.handleDialog}>Create thing</Button>
+                  <CreateThing
+                      key={new Date().getTime()} 
+                      open={this.state.openDialog}
+                      OnClose={this.handleDialog} 
+                  />
               </li>
               
               <li className="nav-item">
@@ -105,7 +122,6 @@ class App extends Component {
             <Route path="/register" element={<Register />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/user" element={<BoardUser />} />
-            <Route path="/add-thing" element={<CreateThing />} />
             <Route path="/calendar" element={<Calendar />} />
             <Route path="/friends" element={<Friends/>} />
           </Routes>
