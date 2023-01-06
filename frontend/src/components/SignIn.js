@@ -3,8 +3,6 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
@@ -15,7 +13,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 import AuthService from "../services/auth.service";
 
-import {useNavigate} from 'react-router-dom';
+import {useNavigate, Navigate} from 'react-router-dom';
 
 function Copyright(props) {
   return (
@@ -33,6 +31,7 @@ function Copyright(props) {
 const theme = createTheme();
 
 export default function SignIn() {
+  const user = AuthService.getCurrentUser();
   const navigate = useNavigate();
 
   const handleSubmit = (event) => {
@@ -54,6 +53,10 @@ export default function SignIn() {
     );
   };
 
+  if(user){
+    return <Navigate to="/calendar" />;
+  }
+  else{
   return (
     <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="xs">
@@ -78,7 +81,7 @@ export default function SignIn() {
               required
               fullWidth
               id="email"
-              label="Email Address"
+              label="Username"
               name="email"
               autoComplete="email"
               autoFocus
@@ -119,4 +122,5 @@ export default function SignIn() {
       </Container>
     </ThemeProvider>
   );
+  }
 }
