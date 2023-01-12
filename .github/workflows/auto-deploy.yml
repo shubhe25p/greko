@@ -46,3 +46,17 @@ jobs:
     
     - name: Push Docker image to Docker Hub
       run: docker push shubhfb/greko-frontend:latest
+  
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: ssh into vm and deploy
+      uses: appleboy/ssh-action@v0.1.7
+      with:
+        host: ${{ secrets.AZURE_HOST }}
+        username: ${{ secrets.AZURE_USERNAME }}
+        key: ${{ secrets.AZURE_KEY }}
+        script: |
+          sh backend/run-backend.sh
+          sh frontend/run-frontend.sh
