@@ -1,6 +1,10 @@
 name: Build and Push Greko
 
-on: [push]
+on: 
+  push:
+    branches:
+      - master
+
 
 jobs:
   build-and-push-greko-backend :
